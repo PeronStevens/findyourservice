@@ -60,7 +60,7 @@
         mounted() {
             axios.get('services')
             .then(response => (this.services = response.data))
-            // .then(this.loading = false);
+            .then(this.loading = false);
         },
         computed: {
             filteredListDistance() {

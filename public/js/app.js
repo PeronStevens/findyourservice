@@ -2211,7 +2211,7 @@ __webpack_require__.r(__webpack_exports__);
 
     axios.get('services').then(function (response) {
       return _this.services = response.data;
-    }); // .then(this.loading = false);
+    }).then(this.loading = false);
   },
   computed: {
     filteredListDistance: function filteredListDistance() {
