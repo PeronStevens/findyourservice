@@ -14,3 +14,7 @@ To run locally
 - php artisan migrate
 
 - php artisan serve
+
+admin login and password for account is:
+admin@admin.com
+password
