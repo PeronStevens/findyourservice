@@ -1,34 +1,33 @@
 <template>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-body">                        
-                        <div v-if="auth" >
-                            <div class="d-flex justify-content-between">
-                                <h4>Services</h4>
-                                <a @click.prevent="showNewServiceForm" href="">
-                                    <span v-show="!displayAddService" >New Service</span>
-                                    <span v-show="displayAddService" >Close</span>
-                                </a>
-                            </div>                      
-                            <ServiceComponent                                 
-                                    @removeService="deleteService" 
-                                    v-show="displayServiceList" 
-                                    v-for="service in services" :key="service.id" 
-                                    :service="service" />
-                        </div>
-                        <div v-else>
-                            <div class="d-flex flex-column justify-content-between" >
-                                <h4>Services</h4>
-                                <ServiceSearchComponent @filterByDistance="filterServices" @searchServices="searchService" />
-                            </div>
-                            <PublicServiceComponent v-for="service in filteredListDistance" :key="service.id" :service="service"  />
-                        </div>
-                        <AddServiceComponent @newService="pushNewService" v-show="displayAddService" />
-                    </div>
+    <div class="card">
+        <div class="card-body">                        
+            <div v-if="auth" >
+                <div class="d-flex justify-content-between">
+                    <h4>Services</h4>
+                    <a @click.prevent="showNewServiceForm" href="">
+                        <span v-show="!displayAddService" >New Service</span>
+                        <span v-show="displayAddService" >Close</span>
+                    </a>
+                </div>                      
+                <ServiceComponent                                 
+                        @removeService="deleteService" 
+                        v-show="displayServiceList" 
+                        v-for="service in services" :key="service.id" 
+                        :service="service" />
+            </div>
+            <div v-else>
+                <div class="d-flex flex-column justify-content-between" >
+                    <h4>Services</h4>
+                    <ServiceSearchComponent @filterByDistance="filterServices" @searchServices="searchService" />
+                </div>
+                <div class="d-flex justify-content-center" v-if="loading" >
+                    <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" alt="">
+                </div>
+                <div v-else >
+                    <PublicServiceComponent v-for="service in filteredListDistance" :key="service.id" :service="service"  />
                 </div>
             </div>
+            <AddServiceComponent @newService="pushNewService" v-show="displayAddService" />
         </div>
     </div>
 </template>
@@ -49,6 +48,7 @@
         props: ['auth'],
         data: () => {
             return {
+                loading: true,
                 userSelecteddDitance: '',
                 userCoordObj: '',
                 searchString: '',
@@ -59,7 +59,8 @@
         }, 
         mounted() {
             axios.get('services')
-            .then(response => (this.services = response.data));
+            .then(response => (this.services = response.data))
+            // .then(this.loading = false);
         },
         computed: {
             filteredListDistance() {

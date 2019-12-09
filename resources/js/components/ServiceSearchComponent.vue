@@ -7,7 +7,8 @@
         <div v-if="geoEnabled" >
             <select @change="showServicesWithinDistance" v-model="selectedDistance">
                 <option disabled value="">Please select one</option>
-                <option v-for="distance in distances" :key="distance" v-text="distance" >
+                <option v-for="distance in distanceObj" :key="distance" :value="distance.distance" >
+                    {{ distance.title }}
                 </option>
             </select>
             <span> in km</span>
@@ -25,7 +26,40 @@ export default {
             userSearchString: '',
             selectedDistance: '',
             geoEnabled: false,
-            distances: [1,2,5,10,25,50,100],
+            distanceObj: [
+                {
+                    title: '1',
+                    distance: 1
+                },
+                {
+                    title: '2',
+                    distance: 2                    
+                },
+                {
+                    title: '5',
+                    distance: 5
+                },
+                {
+                    title: '10',
+                    distance: 10
+                },
+                {
+                    title: '25',
+                    distance: 25
+                },
+                {
+                    title: '50',
+                    distance: 50
+                },
+                {
+                    title: '100',
+                    distance: 100
+                },
+                {
+                    title: 'Anywhere',
+                    distance: 999999
+                }
+            ],
             userCoords: {
                 latitude: 0,
                 longitude: 0

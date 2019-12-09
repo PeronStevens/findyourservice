@@ -1,5 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-    <services-component :auth="{{ Auth::user() ?? 0 }}" ></services-component>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <services-component :auth="{{ Auth::user() ?? 0 }}" ></services-component>
+            </div>
+        </div>
+    </div>
+</div>                
 @endsection

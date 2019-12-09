@@ -2072,13 +2072,38 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       userSearchString: '',
       selectedDistance: '',
       geoEnabled: false,
-      distances: [1, 2, 5, 10, 25, 50, 100],
+      distanceObj: [{
+        title: '1',
+        distance: 1
+      }, {
+        title: '2',
+        distance: 2
+      }, {
+        title: '5',
+        distance: 5
+      }, {
+        title: '10',
+        distance: 10
+      }, {
+        title: '25',
+        distance: 25
+      }, {
+        title: '50',
+        distance: 50
+      }, {
+        title: '100',
+        distance: 100
+      }, {
+        title: 'Anywhere',
+        distance: 999999
+      }],
       userCoords: {
         latitude: 0,
         longitude: 0
@@ -2158,7 +2183,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 
 
@@ -2173,6 +2197,7 @@ __webpack_require__.r(__webpack_exports__);
   props: ['auth'],
   data: function data() {
     return {
+      loading: true,
       userSelecteddDitance: '',
       userCoordObj: '',
       searchString: '',
@@ -2186,7 +2211,7 @@ __webpack_require__.r(__webpack_exports__);
 
     axios.get('services').then(function (response) {
       return _this.services = response.data;
-    });
+    }); // .then(this.loading = false);
   },
   computed: {
     filteredListDistance: function filteredListDistance() {
@@ -38717,11 +38742,18 @@ var render = function() {
                 _vm._v("Please select one")
               ]),
               _vm._v(" "),
-              _vm._l(_vm.distances, function(distance) {
-                return _c("option", {
-                  key: distance,
-                  domProps: { textContent: _vm._s(distance) }
-                })
+              _vm._l(_vm.distanceObj, function(distance) {
+                return _c(
+                  "option",
+                  { key: distance, domProps: { value: distance.distance } },
+                  [
+                    _vm._v(
+                      "\n                " +
+                        _vm._s(distance.title) +
+                        "\n            "
+                    )
+                  ]
+                )
               })
             ],
             2
@@ -38754,137 +38786,134 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "container" }, [
-    _c("div", { staticClass: "row justify-content-center" }, [
-      _c("div", { staticClass: "col-md-8" }, [
-        _c("div", { staticClass: "card" }, [
-          _c(
-            "div",
-            { staticClass: "card-body" },
-            [
-              _vm.auth
-                ? _c(
-                    "div",
+  return _c("div", { staticClass: "card" }, [
+    _c(
+      "div",
+      { staticClass: "card-body" },
+      [
+        _vm.auth
+          ? _c(
+              "div",
+              [
+                _c("div", { staticClass: "d-flex justify-content-between" }, [
+                  _c("h4", [_vm._v("Services")]),
+                  _vm._v(" "),
+                  _c(
+                    "a",
+                    {
+                      attrs: { href: "" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.showNewServiceForm($event)
+                        }
+                      }
+                    },
                     [
                       _c(
-                        "div",
-                        { staticClass: "d-flex justify-content-between" },
-                        [
-                          _c("h4", [_vm._v("Services")]),
-                          _vm._v(" "),
-                          _c(
-                            "a",
-                            {
-                              attrs: { href: "" },
-                              on: {
-                                click: function($event) {
-                                  $event.preventDefault()
-                                  return _vm.showNewServiceForm($event)
-                                }
-                              }
-                            },
-                            [
-                              _c(
-                                "span",
-                                {
-                                  directives: [
-                                    {
-                                      name: "show",
-                                      rawName: "v-show",
-                                      value: !_vm.displayAddService,
-                                      expression: "!displayAddService"
-                                    }
-                                  ]
-                                },
-                                [_vm._v("New Service")]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "span",
-                                {
-                                  directives: [
-                                    {
-                                      name: "show",
-                                      rawName: "v-show",
-                                      value: _vm.displayAddService,
-                                      expression: "displayAddService"
-                                    }
-                                  ]
-                                },
-                                [_vm._v("Close")]
-                              )
-                            ]
-                          )
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _vm._l(_vm.services, function(service) {
-                        return _c("ServiceComponent", {
+                        "span",
+                        {
                           directives: [
                             {
                               name: "show",
                               rawName: "v-show",
-                              value: _vm.displayServiceList,
-                              expression: "displayServiceList"
+                              value: !_vm.displayAddService,
+                              expression: "!displayAddService"
                             }
-                          ],
-                          key: service.id,
-                          attrs: { service: service },
-                          on: { removeService: _vm.deleteService }
-                        })
-                      })
-                    ],
-                    2
-                  )
-                : _c(
-                    "div",
-                    [
-                      _c(
-                        "div",
-                        {
-                          staticClass:
-                            "d-flex flex-column justify-content-between"
+                          ]
                         },
-                        [
-                          _c("h4", [_vm._v("Services")]),
-                          _vm._v(" "),
-                          _c("ServiceSearchComponent", {
-                            on: {
-                              filterByDistance: _vm.filterServices,
-                              searchServices: _vm.searchService
-                            }
-                          })
-                        ],
-                        1
+                        [_vm._v("New Service")]
                       ),
                       _vm._v(" "),
-                      _vm._l(_vm.filteredListDistance, function(service) {
-                        return _c("PublicServiceComponent", {
-                          key: service.id,
-                          attrs: { service: service }
-                        })
-                      })
+                      _c(
+                        "span",
+                        {
+                          directives: [
+                            {
+                              name: "show",
+                              rawName: "v-show",
+                              value: _vm.displayAddService,
+                              expression: "displayAddService"
+                            }
+                          ]
+                        },
+                        [_vm._v("Close")]
+                      )
+                    ]
+                  )
+                ]),
+                _vm._v(" "),
+                _vm._l(_vm.services, function(service) {
+                  return _c("ServiceComponent", {
+                    directives: [
+                      {
+                        name: "show",
+                        rawName: "v-show",
+                        value: _vm.displayServiceList,
+                        expression: "displayServiceList"
+                      }
                     ],
-                    2
-                  ),
-              _vm._v(" "),
-              _c("AddServiceComponent", {
-                directives: [
-                  {
-                    name: "show",
-                    rawName: "v-show",
-                    value: _vm.displayAddService,
-                    expression: "displayAddService"
-                  }
+                    key: service.id,
+                    attrs: { service: service },
+                    on: { removeService: _vm.deleteService }
+                  })
+                })
+              ],
+              2
+            )
+          : _c("div", [
+              _c(
+                "div",
+                { staticClass: "d-flex flex-column justify-content-between" },
+                [
+                  _c("h4", [_vm._v("Services")]),
+                  _vm._v(" "),
+                  _c("ServiceSearchComponent", {
+                    on: {
+                      filterByDistance: _vm.filterServices,
+                      searchServices: _vm.searchService
+                    }
+                  })
                 ],
-                on: { newService: _vm.pushNewService }
-              })
-            ],
-            1
-          )
-        ])
-      ])
-    ])
+                1
+              ),
+              _vm._v(" "),
+              _vm.loading
+                ? _c("div", { staticClass: "d-flex justify-content-center" }, [
+                    _c("img", {
+                      attrs: {
+                        src:
+                          "https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
+                        alt: ""
+                      }
+                    })
+                  ])
+                : _c(
+                    "div",
+                    _vm._l(_vm.filteredListDistance, function(service) {
+                      return _c("PublicServiceComponent", {
+                        key: service.id,
+                        attrs: { service: service }
+                      })
+                    }),
+                    1
+                  )
+            ]),
+        _vm._v(" "),
+        _c("AddServiceComponent", {
+          directives: [
+            {
+              name: "show",
+              rawName: "v-show",
+              value: _vm.displayAddService,
+              expression: "displayAddService"
+            }
+          ],
+          on: { newService: _vm.pushNewService }
+        })
+      ],
+      1
+    )
   ])
 }
 var staticRenderFns = []
