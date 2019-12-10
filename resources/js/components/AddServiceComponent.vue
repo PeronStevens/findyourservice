@@ -114,7 +114,6 @@ export default {
                         if (this.formFields.city == "") 
                             if (addressType == 'sublocality_level_1')
                                 this.formFields.city = val;
-                        
 
                     if (addressType == 'administrative_area_level_1') this.formFields.state = val;
                     if (addressType == 'postal_code')                 this.formFields.zipcode = val;

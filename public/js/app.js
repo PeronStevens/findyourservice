@@ -2035,8 +2035,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       axios["delete"]('services/' + this.id).then(function (response) {
-        console.log(response);
-
+        // console.log(response);
         _this.$emit('removeService', response.data);
       });
     }
@@ -2235,6 +2234,7 @@ __webpack_require__.r(__webpack_exports__);
       this.services = this.services.filter(function (value) {
         return value.id != service.id;
       });
+      alert('Service Removed');
     },
     searchService: function searchService(chars) {
       this.searchString = chars;

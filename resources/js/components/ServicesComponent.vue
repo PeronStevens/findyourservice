@@ -87,6 +87,8 @@
                     return value.id != service.id;
 
                 });
+
+                alert('Service Removed');
             },
             searchService: function(chars) {
                 this.searchString = chars;

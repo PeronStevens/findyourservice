@@ -20,7 +20,7 @@ export default {
         removeService: function() {
             axios.delete('services/' + this.id)
             .then((response) => {
-                console.log(response);
+                // console.log(response);
 
                 this.$emit('removeService', response.data)
             })
