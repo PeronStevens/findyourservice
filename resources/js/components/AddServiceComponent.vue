@@ -77,7 +77,8 @@ export default {
                 locality: 'long_name',
                 administrative_area_level_1: 'short_name',
                 country: 'long_name',
-                postal_code: 'short_name'
+                postal_code: 'short_name',
+                sublocality_level_1: 'long_name'
             }
         }
     },
@@ -107,8 +108,14 @@ export default {
                 var addressType = place.address_components[i].types[0];
                 if (this.componentForm[addressType]) {
                     var val = place.address_components[i][this.componentForm[addressType]];
+                    
+                    if (addressType == 'locality')                    
+                        this.formFields.city = val;
+                        if (this.formFields.city == "") 
+                            if (addressType == 'sublocality_level_1')
+                                this.formFields.city = val;
+                        
 
-                    if (addressType == 'locality')                    this.formFields.city = val;
                     if (addressType == 'administrative_area_level_1') this.formFields.state = val;
                     if (addressType == 'postal_code')                 this.formFields.zipcode = val;
                     if (addressType == 'street_number')               addressStr = val;

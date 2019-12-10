@@ -92,7 +92,7 @@ export default {
 
         },
         showServicesWithinDistance: function() {
-                this.$emit('filterByDistance', this.userCoords, this.selectedDistance);
+            this.$emit('filterByDistance', this.userCoords, this.selectedDistance);
         }
     }
 }

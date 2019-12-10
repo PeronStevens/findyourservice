@@ -1916,7 +1916,8 @@ __webpack_require__.r(__webpack_exports__);
         locality: 'long_name',
         administrative_area_level_1: 'short_name',
         country: 'long_name',
-        postal_code: 'short_name'
+        postal_code: 'short_name',
+        sublocality_level_1: 'long_name'
       }
     };
   },
@@ -1946,6 +1947,7 @@ __webpack_require__.r(__webpack_exports__);
         if (_this.componentForm[addressType]) {
           var val = place.address_components[i][_this.componentForm[addressType]];
           if (addressType == 'locality') _this.formFields.city = val;
+          if (_this.formFields.city == "") if (addressType == 'sublocality_level_1') _this.formFields.city = val;
           if (addressType == 'administrative_area_level_1') _this.formFields.state = val;
           if (addressType == 'postal_code') _this.formFields.zipcode = val;
           if (addressType == 'street_number') addressStr = val;
