@@ -1,5 +1,6 @@
 <template>
     <div class="mb-4" >
+        <h4>Services</h4>
         <div class="d-flex mb-2" >
             <input v-model="userSearchString" class="form-control" type="text" placeholder="search services">
             <button @click="sendSearch" class="ml-2 text-white btn btn-info" >Submit</button>
@@ -7,7 +8,7 @@
         <div v-if="geoEnabled" >
             <select @change="showServicesWithinDistance" v-model="selectedDistance">
                 <option disabled value="">Please select one</option>
-                <option v-for="distance in distanceObj" :key="distance" :value="distance.distance" >
+                <option v-for="distance in distanceObj" :key="distance.distance" :value="distance.distance" >
                     {{ distance.title }}
                 </option>
             </select>

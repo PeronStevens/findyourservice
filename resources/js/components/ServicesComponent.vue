@@ -9,18 +9,13 @@
                         <span v-show="displayAddService" >Close</span>
                     </a>
                 </div>                      
-                <ServiceComponent                                 
-                        @removeService="deleteService" 
-                        v-show="displayServiceList" 
-                        v-for="service in services" :key="service.id" 
-                        :service="service" />
+                <ServiceComponent @removeService="deleteService" v-show="displayServiceList" v-for="service in services" :key="service.id" :service="service" />
             </div>
             <div v-else>
                 <div class="d-flex flex-column justify-content-between" >
-                    <h4>Services</h4>
                     <ServiceSearchComponent @filterByDistance="filterServices" @searchServices="searchService" />
                 </div>
-                <div class="d-flex justify-content-center" v-if="loading" >
+                <div v-if="loading"  class="d-flex justify-content-center" >
                     <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" alt="">
                 </div>
                 <div v-else >
@@ -83,10 +78,11 @@
             },
             pushNewService(service) {
                 this.services.push(service);
+                alert('Service Added');
             },
             deleteService(service) {
 
-                this.services = this.services.filter(function(value, index, arr){
+                this.services = this.services.filter(function(value){
 
                     return value.id != service.id;
 
@@ -99,16 +95,6 @@
 
                 this.userCoordObj = userCoordObj;
                 this.userSelecteddDitance = selectedDitance;
-                console.log(selectedDitance);
-
-                this.services.forEach(service => {
-                    console.log("Distance from you to " + service.title + "is " + 
-                    this.getDistanceFromLatLonInKm(this.userCoordObj.latitude,
-                                                   this.userCoordObj.longitude,
-                                                   service.latitude,
-                                                   service.longitude));
-
-                });
 
             },
             getDistanceFromLatLonInKm: function(lat1,lon1,lat2,lon2) {

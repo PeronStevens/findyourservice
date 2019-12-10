@@ -2073,6 +2073,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2178,11 +2179,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
 
 
 
@@ -2231,9 +2227,10 @@ __webpack_require__.r(__webpack_exports__);
     },
     pushNewService: function pushNewService(service) {
       this.services.push(service);
+      alert('Service Added');
     },
     deleteService: function deleteService(service) {
-      this.services = this.services.filter(function (value, index, arr) {
+      this.services = this.services.filter(function (value) {
         return value.id != service.id;
       });
     },
@@ -2241,14 +2238,8 @@ __webpack_require__.r(__webpack_exports__);
       this.searchString = chars;
     },
     filterServices: function filterServices(userCoordObj, selectedDitance) {
-      var _this3 = this;
-
       this.userCoordObj = userCoordObj;
       this.userSelecteddDitance = selectedDitance;
-      console.log(selectedDitance);
-      this.services.forEach(function (service) {
-        console.log("Distance from you to " + service.title + "is " + _this3.getDistanceFromLatLonInKm(_this3.userCoordObj.latitude, _this3.userCoordObj.longitude, service.latitude, service.longitude));
-      });
     },
     getDistanceFromLatLonInKm: function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
       var R = 6371; // Radius of the earth in km
@@ -38672,6 +38663,8 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "mb-4" }, [
+    _c("h4", [_vm._v("Services")]),
+    _vm._v(" "),
     _c("div", { staticClass: "d-flex mb-2" }, [
       _c("input", {
         directives: [
@@ -38745,7 +38738,10 @@ var render = function() {
               _vm._l(_vm.distanceObj, function(distance) {
                 return _c(
                   "option",
-                  { key: distance, domProps: { value: distance.distance } },
+                  {
+                    key: distance.distance,
+                    domProps: { value: distance.distance }
+                  },
                   [
                     _vm._v(
                       "\n                " +
@@ -38866,8 +38862,6 @@ var render = function() {
                 "div",
                 { staticClass: "d-flex flex-column justify-content-between" },
                 [
-                  _c("h4", [_vm._v("Services")]),
-                  _vm._v(" "),
                   _c("ServiceSearchComponent", {
                     on: {
                       filterByDistance: _vm.filterServices,
