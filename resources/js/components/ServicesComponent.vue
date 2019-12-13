@@ -9,7 +9,7 @@
                         <span v-show="displayAddService" >Close</span>
                     </a>
                 </div>                      
-                <ServiceComponent @removeService="deleteService" v-show="displayServiceList" v-for="service in services" :key="service.id" :service="service" />
+                <ServiceComponent @editService="editExistingService" @removeService="deleteService" v-show="displayServiceList" v-for="service in services" :key="service.id" :service="service" />
             </div>
             <div v-else>
                 <div class="d-flex flex-column justify-content-between" >
@@ -22,7 +22,8 @@
                     <PublicServiceComponent v-for="service in filteredListDistance" :key="service.id" :service="service"  />
                 </div>
             </div>
-            <AddServiceComponent @newService="pushNewService" v-show="displayAddService" />
+            <AddServiceComponent :editableService="editServiceObj" @newService="pushNewService" v-show="displayAddService" />
+            <!-- <EditServiceComponent :editableService="editServiceObj"  v-show="displayEditService" /> -->
         </div>
     </div>
 </template>
@@ -31,6 +32,7 @@
     import ServiceComponent from './ServiceComponent';
     import ServiceSearchComponent from './ServiceSearchComponent';
     import AddServiceComponent from './AddServiceComponent';
+    import EditServiceComponent from './EditServiceComponent';
     import PublicServiceComponent from './PublicServiceComponent';
 
     export default {
@@ -38,18 +40,21 @@
             ServiceComponent,
             PublicServiceComponent,
             AddServiceComponent,
-            ServiceSearchComponent
+            ServiceSearchComponent,
+            EditServiceComponent
         },
         props: ['auth'],
         data: () => {
             return {
+                editServiceObj: {},
                 loading: true,
                 userSelecteddDitance: '',
                 userCoordObj: '',
                 searchString: '',
                 services: [],
                 displayServiceList: true,
-                displayAddService: false
+                displayAddService: false,
+                displayEditService: false
             }
         }, 
         mounted() {
@@ -76,9 +81,18 @@
                 this.displayServiceList = !this.displayServiceList
                 this.displayAddService = !this.displayAddService
             },
+            showEditServiceForm: function() {
+                this.displayServiceList = !this.displayServiceList
+                this.displayEditService = !this.displayEditService
+            },
             pushNewService(service) {
                 this.services.push(service);
                 alert('Service Added');
+            },
+            editExistingService: function(service) {
+
+                this.editServiceObj = service;
+                this.showNewServiceForm();
             },
             deleteService(service) {
 

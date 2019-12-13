@@ -13,7 +13,7 @@
                    />
         </div>
 
-        <form @submit.prevent="addService" >
+        <form @submit.prevent="addOrUpdate" >
             <div class="form-group">
                 <label for="title">Title</label>
                 <input type="text" class="form-control" id="title" v-model="formFields.title" aria-describedby="" required>
@@ -50,16 +50,22 @@
             <div class="form-group d-none">
                 <input type="text" class="form-control" id="country" required readonly>
             </div>                                    
-            <button type="submit" class="btn btn-primary">Add</button>
+            <button type="submit" class="btn btn-primary">
+                <span v-if="editing" >Update</span>
+                <span v-else>Add</span>
+            </button>
         </form>     
+
     </div>
 
 </template>
 
 <script>
 export default {
+    props: ['editableService'],
     data: function() {
         return  {
+            editing: false,
             googleAddress: "",
             formFields: {
                 title       : "",
@@ -111,7 +117,6 @@ export default {
                     
                     if (addressType == 'locality')                    
                         this.formFields.city = val;
-                        if (this.formFields.city == "") 
                             if (addressType == 'sublocality_level_1')
                                 this.formFields.city = val;
 
@@ -131,20 +136,46 @@ export default {
         });
     },
     methods: {
-        addService: function() {
-            axios.post('services', this.formFields)
-            .then((response) => {
+        addOrUpdate: function() {
+            if (this.editing) {
 
-                Object.keys(this.formFields).forEach(key => {
-                    this.formFields[key] = ""
-                });
+                axios.patch('services/' + this.editableService.id, this.formFields)
+                .then((response) => {
+                    if (response.data == 1)
+                        window.location.reload();
+                })
 
-                this.googleAddress = "";
 
-                this.$emit('newService', response.data);
+            } else {
 
-            })
+                axios.post('services', this.formFields)
+                .then((response) => {
+    
+                    Object.keys(this.formFields).forEach(key => {
+                        this.formFields[key] = ""
+                    });
+    
+                    this.googleAddress = "";
+    
+                    this.$emit('newService', response.data);
+    
+                })
+            }
+
         }
+    },
+    watch: { 
+      	editableService: function(newVal, oldVal) { // watch it
+           this.formFields.title = newVal.title
+           this.formFields.description = newVal.description
+           this.formFields.address = newVal.address
+           this.formFields.city = newVal.city
+           this.formFields.state = newVal.state
+           this.formFields.zipcode = newVal.zipcode
+           this.formFields.latitude = newVal.latitude
+           this.formFields.longitude = newVal.longitude
+           this.editing = true
+        }    
     }
 }
 </script>

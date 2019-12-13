@@ -1896,9 +1896,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['editableService'],
   data: function data() {
     return {
+      editing: false,
       googleAddress: "",
       formFields: {
         title: "",
@@ -1947,7 +1953,7 @@ __webpack_require__.r(__webpack_exports__);
         if (_this.componentForm[addressType]) {
           var val = place.address_components[i][_this.componentForm[addressType]];
           if (addressType == 'locality') _this.formFields.city = val;
-          if (_this.formFields.city == "") if (addressType == 'sublocality_level_1') _this.formFields.city = val;
+          if (addressType == 'sublocality_level_1') _this.formFields.city = val;
           if (addressType == 'administrative_area_level_1') _this.formFields.state = val;
           if (addressType == 'postal_code') _this.formFields.zipcode = val;
           if (addressType == 'street_number') addressStr = val;
@@ -1961,18 +1967,64 @@ __webpack_require__.r(__webpack_exports__);
     });
   },
   methods: {
-    addService: function addService() {
+    addOrUpdate: function addOrUpdate() {
       var _this2 = this;
 
-      axios.post('services', this.formFields).then(function (response) {
-        Object.keys(_this2.formFields).forEach(function (key) {
-          _this2.formFields[key] = "";
+      if (this.editing) {
+        axios.patch('services/' + this.editableService.id, this.formFields).then(function (response) {
+          if (response.data == 1) window.location.reload();
         });
-        _this2.googleAddress = "";
+      } else {
+        axios.post('services', this.formFields).then(function (response) {
+          Object.keys(_this2.formFields).forEach(function (key) {
+            _this2.formFields[key] = "";
+          });
+          _this2.googleAddress = "";
 
-        _this2.$emit('newService', response.data);
-      });
+          _this2.$emit('newService', response.data);
+        });
+      }
     }
+  },
+  watch: {
+    editableService: function editableService(newVal, oldVal) {
+      // watch it
+      this.formFields.title = newVal.title;
+      this.formFields.description = newVal.description;
+      this.formFields.address = newVal.address;
+      this.formFields.city = newVal.city;
+      this.formFields.state = newVal.state;
+      this.formFields.zipcode = newVal.zipcode;
+      this.formFields.latitude = newVal.latitude;
+      this.formFields.longitude = newVal.longitude;
+      this.editing = true;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/EditServiceComponent.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/EditServiceComponent.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['editableService'],
+  data: function data() {
+    return {
+      ser: this.editableService
+    };
   }
 });
 
@@ -2023,6 +2075,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['service'],
   data: function data() {
@@ -2038,6 +2091,9 @@ __webpack_require__.r(__webpack_exports__);
         // console.log(response);
         _this.$emit('removeService', response.data);
       });
+    },
+    editService: function editService() {
+      this.$emit('editService', this.service);
     }
   }
 });
@@ -2150,7 +2206,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ServiceComponent__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ServiceComponent */ "./resources/js/components/ServiceComponent.vue");
 /* harmony import */ var _ServiceSearchComponent__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ServiceSearchComponent */ "./resources/js/components/ServiceSearchComponent.vue");
 /* harmony import */ var _AddServiceComponent__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./AddServiceComponent */ "./resources/js/components/AddServiceComponent.vue");
-/* harmony import */ var _PublicServiceComponent__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./PublicServiceComponent */ "./resources/js/components/PublicServiceComponent.vue");
+/* harmony import */ var _EditServiceComponent__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./EditServiceComponent */ "./resources/js/components/EditServiceComponent.vue");
+/* harmony import */ var _PublicServiceComponent__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./PublicServiceComponent */ "./resources/js/components/PublicServiceComponent.vue");
 //
 //
 //
@@ -2180,6 +2237,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+
 
 
 
@@ -2187,20 +2246,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
     ServiceComponent: _ServiceComponent__WEBPACK_IMPORTED_MODULE_0__["default"],
-    PublicServiceComponent: _PublicServiceComponent__WEBPACK_IMPORTED_MODULE_3__["default"],
+    PublicServiceComponent: _PublicServiceComponent__WEBPACK_IMPORTED_MODULE_4__["default"],
     AddServiceComponent: _AddServiceComponent__WEBPACK_IMPORTED_MODULE_2__["default"],
-    ServiceSearchComponent: _ServiceSearchComponent__WEBPACK_IMPORTED_MODULE_1__["default"]
+    ServiceSearchComponent: _ServiceSearchComponent__WEBPACK_IMPORTED_MODULE_1__["default"],
+    EditServiceComponent: _EditServiceComponent__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
   props: ['auth'],
   data: function data() {
     return {
+      editServiceObj: {},
       loading: true,
       userSelecteddDitance: '',
       userCoordObj: '',
       searchString: '',
       services: [],
       displayServiceList: true,
-      displayAddService: false
+      displayAddService: false,
+      displayEditService: false
     };
   },
   mounted: function mounted() {
@@ -2226,9 +2288,17 @@ __webpack_require__.r(__webpack_exports__);
       this.displayServiceList = !this.displayServiceList;
       this.displayAddService = !this.displayAddService;
     },
+    showEditServiceForm: function showEditServiceForm() {
+      this.displayServiceList = !this.displayServiceList;
+      this.displayEditService = !this.displayEditService;
+    },
     pushNewService: function pushNewService(service) {
       this.services.push(service);
       alert('Service Added');
+    },
+    editExistingService: function editExistingService(service) {
+      this.editServiceObj = service;
+      this.showNewServiceForm();
     },
     deleteService: function deleteService(service) {
       this.services = this.services.filter(function (value) {
@@ -38337,7 +38407,7 @@ var render = function() {
         on: {
           submit: function($event) {
             $event.preventDefault()
-            return _vm.addService($event)
+            return _vm.addOrUpdate($event)
           }
         }
       },
@@ -38516,7 +38586,11 @@ var render = function() {
         _c(
           "button",
           { staticClass: "btn btn-primary", attrs: { type: "submit" } },
-          [_vm._v("Add")]
+          [
+            _vm.editing
+              ? _c("span", [_vm._v("Update")])
+              : _c("span", [_vm._v("Add")])
+          ]
         )
       ]
     )
@@ -38546,6 +38620,30 @@ var staticRenderFns = [
     ])
   }
 ]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/EditServiceComponent.vue?vue&type=template&id=a36e9046&":
+/*!***********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/EditServiceComponent.vue?vue&type=template&id=a36e9046& ***!
+  \***********************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("p", [_vm._v("\n    " + _vm._s(this.editableService) + "\n")])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -38624,6 +38722,21 @@ var render = function() {
       _c("h6", { staticClass: "card-subtitle mb-2 text-muted" }, [
         _vm._v(_vm._s(_vm.service.description) + "e")
       ]),
+      _vm._v(" "),
+      _c(
+        "a",
+        {
+          staticClass: "card-link",
+          attrs: { href: "#" },
+          on: {
+            click: function($event) {
+              $event.preventDefault()
+              return _vm.editService($event)
+            }
+          }
+        },
+        [_vm._v("Edit")]
+      ),
       _vm._v(" "),
       _c(
         "a",
@@ -38853,7 +38966,10 @@ var render = function() {
                     ],
                     key: service.id,
                     attrs: { service: service },
-                    on: { removeService: _vm.deleteService }
+                    on: {
+                      editService: _vm.editExistingService,
+                      removeService: _vm.deleteService
+                    }
                   })
                 })
               ],
@@ -38905,6 +39021,7 @@ var render = function() {
               expression: "displayAddService"
             }
           ],
+          attrs: { editableService: _vm.editServiceObj },
           on: { newService: _vm.pushNewService }
         })
       ],
@@ -51221,6 +51338,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddServiceComponent_vue_vue_type_template_id_52af0424_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddServiceComponent_vue_vue_type_template_id_52af0424_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/EditServiceComponent.vue":
+/*!**********************************************************!*\
+  !*** ./resources/js/components/EditServiceComponent.vue ***!
+  \**********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _EditServiceComponent_vue_vue_type_template_id_a36e9046___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./EditServiceComponent.vue?vue&type=template&id=a36e9046& */ "./resources/js/components/EditServiceComponent.vue?vue&type=template&id=a36e9046&");
+/* harmony import */ var _EditServiceComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./EditServiceComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/EditServiceComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _EditServiceComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _EditServiceComponent_vue_vue_type_template_id_a36e9046___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _EditServiceComponent_vue_vue_type_template_id_a36e9046___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/EditServiceComponent.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/EditServiceComponent.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************!*\
+  !*** ./resources/js/components/EditServiceComponent.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_EditServiceComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./EditServiceComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/EditServiceComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_EditServiceComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/EditServiceComponent.vue?vue&type=template&id=a36e9046&":
+/*!*****************************************************************************************!*\
+  !*** ./resources/js/components/EditServiceComponent.vue?vue&type=template&id=a36e9046& ***!
+  \*****************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_EditServiceComponent_vue_vue_type_template_id_a36e9046___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./EditServiceComponent.vue?vue&type=template&id=a36e9046& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/EditServiceComponent.vue?vue&type=template&id=a36e9046&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_EditServiceComponent_vue_vue_type_template_id_a36e9046___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_EditServiceComponent_vue_vue_type_template_id_a36e9046___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
